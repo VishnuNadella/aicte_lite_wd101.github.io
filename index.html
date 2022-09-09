@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Form</title>
+    <style>
+      body {
+        background-color: antiquewhite;
+        font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+      }
+      .MainHeading{
+        text-align: center;
+        padding: 10px;
+      }
+      .box{
+        background-color: beige;
+        text-align: center;
+        padding: 10px;
+        margin: 0px 180px;
+      }
+      .box div {
+        margin: 15px;
+      }
+      .entry {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <form class="form" id="form">
+        <h2 class = "MainHeading">Registration Form</h2>
+          <div>
+            <label for="name">Name</label>
+            
+              <input
+            
+                type="text"
+                name="name"
+                id="name"
+                placeholder="Full Name"
+                required
+              />
+            
+          </div>
+          <div>
+            <label for="email">E-mail</label>
+            
+              <input
+            
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email"
+                required
+              />
+            
+          </div>
+          <div>
+            <label for="name">Password</label>
+            
+              <input
+            
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Password"
+                required
+              />
+            
+          </div>
+          <div>
+            <label for="dob">Date Of Birth</label>
+            
+              <input
+                style="width: 220px"
+            
+                type="date"
+                name="dob"
+                id="dob"
+                required
+              />
+            
+          </div>
+          <div>
+            <input type="checkbox" name="chkboxst" id="chkboxst" />
+            <label for="checkbox">Accept all Terms</label>
+          </div>
+            <div>
+              <button type="submit">Submit</button>
+            </div>
+      </form>
+    </div>
+
+    <div class="entry">
+      <h2>Entries</h2>
+      <div id="entriesTable"></div>
+    </div>
+  </body>
+  <script>
+    let form = document.getElementById("form");
+
+
+    const retriveEntries = () => {
+      let entries = localStorage.getItem("userEntry");
+
+      if (entries) {
+        entries = JSON.parse(entries);
+      } else {
+        entries = [];
+      }
+      return entries;
+    };
+
+    let Entries = retriveEntries();
+
+    const displayEntries = () => {
+      const entries = retriveEntries();
+
+      const rows = entries
+        .map((entry) => {
+          const name = `<td class="td">${entry.name}</td>`;
+          const email = `<td class="td">${entry.email}</td>`;
+          const password = `<td class="td">${entry.password}</td>`;
+          const dob = `<td class="td">${entry.dob}</td>`;
+          const accept = `<td class="td">${entry.accept}</td>`;
+
+          const row = `<tr>${name} ${email} ${password} ${dob} ${accept}</tr>`;
+          return row;
+        })
+        .join("\n");
+
+      let entries_tbl = document.getElementById("entriesTable");
+
+      // <th class="th">Name</th> inside oneMore head for name
+      entries_tbl.innerHTML = `<table class="table" border="2 1px solid">
+      <tr>
+        <th class="th">Name</th>
+        <th class="th">Email</th>
+        <th class="th">Password</th>
+        <th class="th">Dob</th>
+        <th class="th">Accepted terms?</th>
+      </tr>
+        ${rows}
+      </table>`;
+    };
+
+    // const saveUserFrom = () => {
+    const saveUserFrom = (event) => {
+      event.preventDefault();
+
+      let name = document.getElementById("name").value;
+      let email = document.getElementById("email").value;
+      let password = document.getElementById("password").value;
+      let dob = document.getElementById("dob").value;
+      let accept = document.getElementById("chkboxst").checked;
+
+      let entry_obj = {
+        name,
+        email,
+        password,
+        dob,
+        accept,
+      };
+
+      Entries.push(entry_obj);
+
+      localStorage.setItem("userEntry", JSON.stringify(Entries));
+
+      displayEntries();
+    };
+
+    form.addEventListener("submit", saveUserFrom);
+
+    displayEntries();
+
+    // Add additional validations to the date input field so that it accepts date of birth for people between ages 18 and 55 only. You'll need to figure out how to do this.
+
+    let Dob = document.getElementById("dob");
+    Dob.addEventListener("change", () => {
+        const dob = document.getElementById("dob").value;
+        let current_date = new Date();
+        let year = current_date.getFullYear();
+        const age = Math.abs(new Date(dob).getUTCFullYear() - year);
+        Dob.style.border = "2px solid rgba(0, 0, 0, 0.4)";
+      if (age < 18 || age > 55) {
+        Dob.setCustomValidity("Your age isn't between 18 and 55");
+        Dob.style.border = "2px solid red";
+        return;
+      } else {
+        Dob.setCustomValidity("");
+      }
+    });
+
+    const email = document.getElementById("email");
+    email.addEventListener("input", () => {
+        if (email.validity.typeMismatch) {
+            email.setCustomValidity("The email is not in the right format");
+            email.reportValidity();
+        } else {
+            email.setCustomValidity("");
+        };
+    });
+
+  </script>
+</html>
