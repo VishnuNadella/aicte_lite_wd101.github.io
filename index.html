@@ -183,8 +183,6 @@
         let current_date = new Date();
         let year = current_date.getFullYear();
         const age = Math.abs(new Date(dob).getUTCFullYear() - year);
-
-      Dob.style.border = "2px solid rgba(0, 0, 0, 0.4)";
       if (age < 18 || age > 55) {
         Dob.setCustomValidity("Your age is not lies between 18 and 55");
         Dob.style.border = "2px solid red";
